@@ -1,0 +1,27 @@
+{
+  "name": "reddebox",
+  "title": "Reddebox",
+  "description": "jQuery lightbox plugin",
+  "version": "0.1.0",
+  "homepage": "http://gitlab.redde.ru/reddebox",
+  "author": {
+    "name": "Konstantin Gorozhankin",
+    "email": "konstantin.gorozhankin@gmail.com",
+    "url": "redde.ru"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.redde.ru:reddebox.git"
+  },
+  "bugs": "http://gitlab.redde.ru/reddebox/issues",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://gitlab.redde.ru/reddebox/blob/master/LICENSE-MIT"
+    }
+  ],
+  "dependencies": {
+    "jquery": "~1.9.1"
+  },
+  "keywords": []
+}
