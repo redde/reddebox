@@ -1,11 +1,6 @@
-/*
- * reddebox
- * http://gitlab.redde.ru/reddebox
- *
- * Copyright (c) 2013 Konstantin Gorozhankin
- * Licensed under the MIT license.
- */
-
+/*! Reddebox - v0.1.0 - 2013-03-10
+* http://gitlab.redde.ru/reddebox
+* Copyright (c) 2013 Konstantin Gorozhankin; Licensed MIT */
 (function($) {
   
   $.fn.reddebox = function(settings) {
@@ -94,7 +89,8 @@
     },    
 
     setCenter: function() {
-      var el = $(this.printEl).appendTo(this.container.find("#wrap-redde-container").empty()),
+      this.container.find("#wrap-redde-container").html(this.printEl);
+      var el = $(this.printEl),
           w = el.width(), 
           h = el.height();
       this.container.addClass("resize-show-photo").stop(false, false).animate({
