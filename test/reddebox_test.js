@@ -106,7 +106,7 @@
       setCenter: function(){
         start();
         strictEqual(obj.printEl.tagName, "IMG");
-        strictEqual($("#qunit-fixture").html(obj.printEl).find("img").width(), 800);
+        strictEqual($("#qunit-fixture").html(obj.printEl).find("img").width(), 800, "Ширина картинки должна определиться как 800 пикселей");
       }
     });
     $.reddebox.prototype.showImage.call(obj, $("<a/>", obj.jQueryMatchedObj[0]));
