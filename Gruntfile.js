@@ -70,12 +70,34 @@ module.exports = function(grunt) {
         files: '<%= jshint.test.src %>',
         tasks: ['jshint:test', 'qunit']
       },
+      css: {
+        files: 'src/*.scss',
+        tasks: ['sass']
+      }
     },
     connect: {
       server: {
         options: {
           port: 8000,
           base: '.'
+        }
+      }
+    },
+    sass: {
+      options: {
+        compass: true
+      },
+      dev: {
+        files: {
+          'src/<%= pkg.name %>.css': 'src/reddebox.scss'
+        }
+      },
+      dist: {
+        options: {
+          style: 'compressed'
+        },
+        files: {
+          'src/<%= pkg.name %>.min.css': 'src/reddebox.scss'
         }
       }
     }
@@ -90,8 +112,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-sass');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify', 'sass']);
 
 };
