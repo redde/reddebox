@@ -66,6 +66,10 @@ module.exports = function(grunt) {
         files: '<%= jshint.src.src %>',
         tasks: ['jshint:src', 'qunit']
       },
+      coffee: {
+        files: 'src/reddebox.coffee',
+        tasks: ['coffee']
+      },
       test: {
         files: '<%= jshint.test.src %>',
         tasks: ['jshint:test', 'qunit']
@@ -100,6 +104,13 @@ module.exports = function(grunt) {
           'src/<%= pkg.name %>.min.css': 'src/reddebox.scss'
         }
       }
+    },
+    coffee: {
+      compile: {
+        files: {
+          'src/reddebox2.js': 'src/reddebox.coffee'
+        }
+      }
     }
   });
 
@@ -113,8 +124,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-coffee');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify', 'sass']);
+  grunt.registerTask('default', ['coffee', 'jshint', 'qunit', 'clean', 'concat', 'uglify', 'sass']);
 
 };
