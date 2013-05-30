@@ -15,7 +15,7 @@ In your web page:
 <script src="dist/reddebox.min.js"></script>
 <script>
 jQuery(function($) {
-  $.awesome(); // "awesome"
+  $('a').reddebox();
 });
 </script>
 ```
