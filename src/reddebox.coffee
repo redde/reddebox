@@ -1,5 +1,3 @@
-a = 10
-
 (($) ->
   $.fn.reddebox = ->
     settings = $.extend
@@ -15,6 +13,7 @@ a = 10
     @off('click.reddebox').on('click.reddebox', (e)->
       new $.reddebox @, elems, settings
       e.preventDefault()
+      return
     )
 
   $.reddebox = (el, elems, settings) ->
@@ -138,7 +137,7 @@ a = 10
               </div>
             </div>
             """
-      $('body').append 'cont'
+      $('body').append cont
 
       @container = $("#redde-container")
 

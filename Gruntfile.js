@@ -108,7 +108,7 @@ module.exports = function(grunt) {
     coffee: {
       compile: {
         files: {
-          'src/reddebox2.js': 'src/reddebox.coffee'
+          'src/reddebox.js': 'src/reddebox.coffee'
         }
       }
     }
