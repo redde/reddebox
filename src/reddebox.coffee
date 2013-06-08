@@ -30,8 +30,9 @@
         i
     )[0] || 0
 
-    @setInterface el, settings
-    return
+    @settings = settings
+    @setInterface el
+    return @
 
   $.reddebox:: =
     removeReddeBox: ->
@@ -122,8 +123,8 @@
 
       ).find("img").fadeTo 0, 1.0
 
-    setInterface: (linkActive, settings) ->
-      cssClassWrapper = (if (settings.classWrapper) then " class=\"" + settings.classWrapper + "\"" else "")
+    setInterface: (linkActive) ->
+      cssClassWrapper = (if (@settings.classWrapper) then " class='#{@settings.classWrapper}'" else "")
 
       cont = """
             <div id="redde-overlay"></div>
@@ -141,7 +142,7 @@
 
       @container = $("#redde-container")
 
-      $('#redde-overlay').fadeTo 400, settings.overlayOpacity
+      $('#redde-overlay').fadeTo 400, @settings.overlayOpacity
 
       self = @
 
@@ -152,11 +153,11 @@
           return
         return
 
-      unless settings.imageArray.length
+      unless @settings.imageArray.length
         @showImage $(linkActive)
       else
-        if settings.activeImage
-          @activeIndex = settings.activeImage
+        if @settings.activeImage
+          @activeIndex = @settings.activeImage
         @showImage $(@jQueryMatchedObj[@activeIndex])
 
       @container.find("a").click (e) ->

@@ -32,7 +32,9 @@
           return i;
         }
       })[0] || 0;
-      this.setInterface(el, settings);
+      this.settings = settings;
+      this.setInterface(el);
+      return this;
     };
     $.reddebox.prototype = {
       removeReddeBox: function() {
@@ -150,14 +152,14 @@
           }
         }).find("img").fadeTo(0, 1.0);
       },
-      setInterface: function(linkActive, settings) {
+      setInterface: function(linkActive) {
         var cont, cssClassWrapper, self;
 
-        cssClassWrapper = (settings.classWrapper ? " class=\"" + settings.classWrapper + "\"" : "");
+        cssClassWrapper = (this.settings.classWrapper ? " class='" + this.settings.classWrapper + "'" : "");
         cont = "<div id=\"redde-overlay\"></div>\n<div id=\"redde-box\" " + cssClassWrapper + ">\n  <div id=\"redde-container\">\n    <div id=\"wrap-redde-container\"></div>\n    <a href=\"#\" class=\"redde-prev\"></a>\n    <a href=\"#\" class=\"redde-close\"></a>\n    <a href=\"#\" class=\"redde-next\"></a> \n    <div class=\"redde-desc\"></div>\n  </div>\n</div>";
         $('body').append(cont);
         this.container = $("#redde-container");
-        $('#redde-overlay').fadeTo(400, settings.overlayOpacity);
+        $('#redde-overlay').fadeTo(400, this.settings.overlayOpacity);
         self = this;
         $('#redde-box').fadeTo(400, 1.0, function() {
           $(this).bind('click', function(e) {
@@ -166,11 +168,11 @@
             }
           });
         });
-        if (!settings.imageArray.length) {
+        if (!this.settings.imageArray.length) {
           this.showImage($(linkActive));
         } else {
-          if (settings.activeImage) {
-            this.activeIndex = settings.activeImage;
+          if (this.settings.activeImage) {
+            this.activeIndex = this.settings.activeImage;
           }
           this.showImage($(this.jQueryMatchedObj[this.activeIndex]));
         }
