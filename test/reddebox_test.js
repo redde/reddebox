@@ -78,13 +78,17 @@
 
   asyncTest("Iframe unit", 1, function(){
     var obj = $.extend({}, $.reddebox.prototype, {
+      settings: {
+        fWidth: 640,
+        fHeight: 480
+      },
       jQueryMatchedObj: [{
         href: "../ajax.html"
       }],
       updateNavi: function(){},
       setCenter: function(){
         start(); 
-        strictEqual($(obj.printEl)[0].tagName, "IFRAME");
+        strictEqual($(obj.printEl).get(0).tagName, "IFRAME");
       }
     });
     $.reddebox.prototype.showImage.call(obj, $("<a/>", obj.jQueryMatchedObj[0]));

@@ -3,6 +3,8 @@
     settings = $.extend
       overlayOpacity: 0.5
       classWrapper: ""
+      fWidth: 640,
+      fHeight: 480,
       useThisLink: true
       imageArray: []
       activeImage: 0
@@ -70,7 +72,7 @@
           self._printElLoad @
           return
       else
-        @_printElLoad "<iframe src='#{me.attr("href")}' frameborder='0' width='640' height='480' />"
+        @_printElLoad "<iframe src='#{me.attr("href")}' frameborder='0' width='#{@settings.fWidth}' height='#{@settings.fHeight}' />"
       return
 
     _printElLoad: (el) ->

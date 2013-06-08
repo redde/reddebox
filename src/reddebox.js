@@ -6,6 +6,8 @@
       settings = $.extend({
         overlayOpacity: 0.5,
         classWrapper: "",
+        fWidth: 640,
+        fHeight: 480,
         useThisLink: true,
         imageArray: [],
         activeImage: 0
@@ -79,7 +81,7 @@
             self._printElLoad(this);
           });
         } else {
-          this._printElLoad("<iframe src='" + (me.attr("href")) + "' frameborder='0' width='640' height='480' />");
+          this._printElLoad("<iframe src='" + (me.attr("href")) + "' frameborder='0' width='" + this.settings.fWidth + "' height='" + this.settings.fHeight + "' />");
         }
       },
       _printElLoad: function(el) {
