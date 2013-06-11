@@ -116,15 +116,15 @@ module.exports = function(grunt) {
       src: 'src/reddebox.js',
       options: {
         specs: 'spec/reddebox_Spec.js',
-        helpers: './libs/jquery/jquery.js'
-        // template: require('grunt-template-jasmine-requirejs'),
-        // templateOptions: {
-        //   requireConfig: {
-        //     paths: {
-        //       "jquery": "libs/jquery/jquery.js"
-        //     }
-        //   }
-        // }
+        helpers: './libs/jquery/jquery-1.10.1.js',
+        template: require('grunt-template-jasmine-requirejs'),
+        templateOptions: {
+          requireConfig: {
+            paths: {
+              "jquery": "libs/jquery/jquery-1.10.1.js"
+            }
+          }
+        }
       }
     }
   });

@@ -8,6 +8,6 @@ describe("Bar", function() {
 describe("Bar", function() {
   it("it is not foo", function(){
     v = $.reddebox;
-    expect(v == undefined).toEqual(false);
+    expect($.fn.jquery).toEqual('1.10.1');
   })
 })
