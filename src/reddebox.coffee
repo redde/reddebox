@@ -68,9 +68,11 @@
       self = @
       @updateNavi me
       if /\.(jpg|jpeg|gif|png)$/i.test($(me).attr("href"))
-        $('<img />').attr('src', me.attr('href')).fadeTo(0, 0).load ->
-          self._printElLoad @
+        img = new Image()
+        img.onload = ->
+          self._printElLoad $(@).fadeTo(0, 0).get(0)
           return
+        img.src = me.attr('href') 
       else
         @_printElLoad "<iframe src='#{me.attr("href")}' frameborder='0' width='#{@settings.fWidth}' height='#{@settings.fHeight}' />"
       return

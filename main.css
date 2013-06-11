@@ -1,3 +1,7 @@
+a img {
+  border: none;
+  vertical-align: top;
+}
 p.img-preview img {
   height: 100px;
 }

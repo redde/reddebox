@@ -72,14 +72,16 @@
         }
       },
       showImage: function(me) {
-        var self;
+        var img, self;
 
         self = this;
         this.updateNavi(me);
         if (/\.(jpg|jpeg|gif|png)$/i.test($(me).attr("href"))) {
-          $('<img />').attr('src', me.attr('href')).fadeTo(0, 0).load(function() {
-            self._printElLoad(this);
-          });
+          img = new Image();
+          img.onload = function() {
+            self._printElLoad($(this).fadeTo(0, 0).get(0));
+          };
+          img.src = me.attr('href');
         } else {
           this._printElLoad("<iframe src='" + (me.attr("href")) + "' frameborder='0' width='" + this.settings.fWidth + "' height='" + this.settings.fHeight + "' />");
         }
