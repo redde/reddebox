@@ -82,7 +82,7 @@
         if (/\.(jpg|jpeg|gif|png)$/i.test($(me).attr("href"))) {
           img = new Image();
           img.onload = function() {
-            self._printElLoad(this);
+            self._printElLoad($(this).fadeTo(0, 0).get(0));
           };
           img.src = me.attr('href');
         } else {
