@@ -116,15 +116,8 @@ module.exports = function(grunt) {
       src: 'src/reddebox.js',
       options: {
         specs: 'spec/reddebox_Spec.js',
-        helpers: './libs/jquery/jquery-1.10.1.js',
-        template: require('grunt-template-jasmine-requirejs'),
-        templateOptions: {
-          requireConfig: {
-            paths: {
-              "jquery": "libs/jquery/jquery-1.10.1.js"
-            }
-          }
-        }
+        helpers: ['jasmine-jquery.js', './libs/jquery/jquery-1.10.1.js'],
+        keepRunner: true
       }
     }
   });
@@ -140,7 +133,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
-  grunt.loadNpmTasks('grunt-template-jasmine-requirejs');
 
   // Default task.
   grunt.registerTask('default', ['coffee', 'jshint', 'qunit', 'clean', 'concat', 'uglify', 'sass']);
