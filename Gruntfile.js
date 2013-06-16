@@ -34,9 +34,6 @@ module.exports = function(grunt) {
         dest: 'dist/<%= pkg.name %>.min.js'
       },
     },
-    qunit: {
-      files: ['test/**/*.html']
-    },
     jshint: {
       gruntfile: {
         options: {
@@ -62,18 +59,18 @@ module.exports = function(grunt) {
         files: '<%= jshint.gruntfile.src %>',
         tasks: ['jshint:gruntfile']
       },
-      src: {
-        files: '<%= jshint.src.src %>',
-        tasks: ['jshint:src', 'qunit']
-      },
+      // src: {
+      //   files: '<%= jshint.src.src %>',
+      //   tasks: ['jshint:src', 'qunit']
+      // },
       coffee: {
         files: 'src/reddebox.coffee',
         tasks: ['coffee']
       },
-      test: {
-        files: '<%= jshint.test.src %>',
-        tasks: ['jshint:test', 'qunit']
-      },
+      // test: {
+      //   files: '<%= jshint.test.src %>',
+      //   tasks: ['jshint:test', 'qunit']
+      // },
       css: {
         files: 'src/*.scss',
         tasks: ['sass']
@@ -128,7 +125,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
