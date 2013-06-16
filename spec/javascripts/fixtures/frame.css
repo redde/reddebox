@@ -1,0 +1,9 @@
+#redde-box #redde-container #wrap-redde-container iframe {
+  width: 600px;
+  height: 600px;
+}
+
+#redde-box.square400 #redde-container #wrap-redde-container iframe {
+  width: 400px;
+  height: 400px;
+}

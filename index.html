@@ -9,7 +9,26 @@
   <script src="src/reddebox.js"></script>
   <script>
     $(function(){
-      $("a").reddebox();
+      $("p.img-preview a").reddebox({
+        imageArray: ['i/004.jpg', 'i/016.jpg']
+      });
+
+      $('p.empty-lightbox a').reddebox({
+        useThisLink: false,
+        imageArray: ['i/004.jpg', 'i/016.jpg']
+      });
+
+      $('p.condition-lightbox a').reddebox({
+        useThisLink: false,
+        activeIndex: function(){
+          return parseInt($('input[name=image]:checked').val())
+        },
+        imageArray: (function(){
+          return $.map($("p.img-preview a"), function(n){
+            return n.href
+          })
+        })()
+      })      
     });
   </script>
 </head>
@@ -18,11 +37,24 @@
 
   <p class='img-preview'>
     <a href="i/004.jpg"><img src='i/004.jpg'></a>
-    <a href="i/016.jpg"><img src='i/016.jpg'></a>
+    <a href="i/016.jpg" title='Hello, World!'><img src='i/016.jpg'></a>
     <a href="i/067.jpg"><img src='i/067.jpg'></a>
     <a href="i/136.jpg"><img src='i/136.jpg'></a>
     <a href="i/090.jpg"><img src='i/090.jpg'></a>
-    <a href="ajax.html">link</a>    
+    <a href="ajax.html">link</a>   
+  </p>
+
+  <p class='empty-lightbox'>
+    <a href="test">empty lightbox</a>
+  </p>
+
+  <p class='condition-lightbox'>
+    <input type="radio" value="0" name="image" id="image_0" checked> <label for="image_0">первая</label><br>
+    <input type="radio" value="1" name="image" id="image_1"> <label for="image_1">вторая</label><br>
+    <input type="radio" value="2" name="image" id="image_2"> <label for="image_2">третья</label><br>
+    <input type="radio" value="3" name="image" id="image_3"> <label for="image_3">четвертая</label><br>
+    <input type="radio" value="4" name="image" id="image_4"> <label for="image_4">пятая</label><br>
+    <a href="test">show image</a>
   </p>
   
 </body>

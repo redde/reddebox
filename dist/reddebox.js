@@ -1,92 +1,96 @@
-/*! Reddebox - v0.1.0 - 2013-06-11
+/*! Reddebox - v0.1.0 - 2013-06-17
 * http://gitlab.redde.ru/reddebox
 * Copyright (c) 2013 Konstantin Gorozhankin; Licensed MIT */
 (function() {
   (function($) {
-    $.fn.reddebox = function() {
-      var elems, settings;
+    $.fn.reddebox = function(opts) {
+      var elems;
 
-      settings = $.extend({
-        overlayOpacity: 0.5,
-        classWrapper: "",
-        fWidth: 640,
-        fHeight: 480,
-        useThisLink: true,
-        imageArray: [],
-        activeImage: 0
-      }, settings);
       elems = this;
       return this.off('click.reddebox').on('click.reddebox', function(e) {
-        new $.reddebox(this, elems, settings);
+        new $.reddebox(this, elems, opts);
         e.preventDefault();
       });
     };
-    $.reddebox = function(el, elems, settings) {
-      var arr;
+    $.reddebox = function(el, elems, opts) {
+      var imageArray, settings;
 
-      arr = $.map(settings.activeImage, function(n) {
-        return $('<a />').attr('href', n)[0];
+      settings = {
+        overlayOpacity: 0.5,
+        classWrapper: "",
+        useThisLink: true,
+        imageArray: [],
+        activeIndex: 0
+      };
+      $.extend(settings, opts);
+      imageArray = $.map(settings.imageArray, function(n) {
+        return $('<a />').attr('href', n).get(0);
       });
-      if (settings.useThisLink) {
-        this.jQueryMatchedObj = $.merge($.merge([], elems), arr);
-      } else {
-        this.jQueryMatchedObj = arr;
+      this.jQueryMatchedObj = $.merge($.merge([], elems), imageArray);
+      if (!settings.useThisLink) {
+        this.jQueryMatchedObj = $.grep(this.jQueryMatchedObj, function(n) {
+          return el !== n;
+        });
       }
-      this.activeIndex = $.map(elems, function(n, i) {
-        if (n === el) {
-          return i;
-        }
-      })[0] || 0;
+      this.maxLength = this.jQueryMatchedObj.length;
       this.settings = settings;
       this.setInterface(el);
       return this;
     };
     $.reddebox.prototype = {
-      removeReddeBox: function() {
+      _setActiveIndex: function(el) {
+        if ($.isFunction(this.settings.activeIndex)) {
+          return this.activeIndex = this.settings.activeIndex.call();
+        } else {
+          return this.activeIndex = $.map(this.jQueryMatchedObj, function(n, i) {
+            if (n === el) {
+              return i;
+            }
+          })[0] || 0;
+        }
+      },
+      remove: function() {
         $('#redde-overlay, #redde-box').remove();
       },
-      setActiveIndex: function(linkActiveHref) {
-        var i;
-
-        i = this.jQueryMatchedObj.length;
-        while (i--) {
-          if (this.jQueryMatchedObj[i].href === linkActiveHref) {
-            this.activeIndex = i;
-            break;
-          }
-        }
+      vis: function(el) {
+        return el.css('visibility', 'visible');
       },
-      updateNavi: function(linkActive) {
-        var maxLength;
-
-        maxLength = this.jQueryMatchedObj.length;
-        this.setActiveIndex(linkActive.attr('href'));
-        this.container.find('a.redde-next, a.redde-prev').css('visibility', 'visible');
+      hid: function(el) {
+        return el.css('visibility', 'hidden');
+      },
+      updateNavi: function() {
+        this.vis(this.container.find('i.redde-next, i.redde-prev'));
         if (this.activeIndex === 0) {
-          $('a.redde-prev').css('visibility', 'hidden');
+          this.hid($('i.redde-prev'));
         }
-        if (this.activeIndex === maxLength - 1) {
-          $('a.redde-next').css('visibility', 'hidden');
+        if (this.activeIndex === this.maxLength - 1) {
+          this.hid($('i.redde-next'));
         }
-        if (linkActive.attr('title')) {
-          this.container.find("div.redde-desc").html(linkActive.attr("title")).css("visibility", "visible");
+        return this._setTitle();
+      },
+      _setTitle: function() {
+        var title;
+
+        if (title = this.jQueryMatchedObj[this.activeIndex].title) {
+          this.vis(this.container.find("div.redde-desc").html(title));
         } else {
-          this.container.find("div.redde-desc").empty().css("visibility", "hidden");
+          this.hid(this.container.find("div.redde-desc").empty());
         }
       },
-      showImage: function(me) {
-        var img, self;
+      showImage: function() {
+        var href, img, self;
 
         self = this;
-        this.updateNavi(me);
-        if (/\.(jpg|jpeg|gif|png)$/i.test($(me).attr("href"))) {
+        this.updateNavi();
+        href = $(this.jQueryMatchedObj[this.activeIndex]).attr("href");
+        if (/\.(jpg|jpeg|gif|png)$/i.test(href)) {
           img = new Image();
           img.onload = function() {
             self._printElLoad($(this).fadeTo(0, 0).get(0));
           };
-          img.src = me.attr('href');
+          img.src = href;
         } else {
-          this._printElLoad("<iframe src='" + (me.attr("href")) + "' frameborder='0' width='" + this.settings.fWidth + "' height='" + this.settings.fHeight + "' />");
+          this._printElLoad("<iframe src='" + href + "' frameborder='0' />");
         }
       },
       _printElLoad: function(el) {
@@ -159,48 +163,41 @@
           }
         }).find("img").fadeTo(0, 1.0);
       },
-      setInterface: function(linkActive) {
-        var cont, cssClassWrapper, self;
-
-        cssClassWrapper = (this.settings.classWrapper ? " class='" + this.settings.classWrapper + "'" : "");
-        cont = "<div id=\"redde-overlay\"></div>\n<div id=\"redde-box\" " + cssClassWrapper + ">\n  <div id=\"redde-container\">\n    <div id=\"wrap-redde-container\"></div>\n    <a href=\"#\" class=\"redde-prev\"></a>\n    <a href=\"#\" class=\"redde-close\"></a>\n    <a href=\"#\" class=\"redde-next\"></a> \n    <div class=\"redde-desc\"></div>\n  </div>\n</div>";
-        $('body').append(cont);
-        this.container = $("#redde-container");
-        $('#redde-overlay').fadeTo(400, this.settings.overlayOpacity);
-        self = this;
-        $('#redde-box').fadeTo(400, 1.0, function() {
-          $(this).bind('click', function(e) {
-            if (e.target === this) {
-              self.removeReddeBox();
-            }
-          });
-        });
-        if (!this.settings.imageArray.length) {
-          this.showImage($(linkActive));
+      _cssClassWrapper: function() {
+        if (!this.settings.classWrapper) {
+          return "";
         } else {
-          if (this.settings.activeImage) {
-            this.activeIndex = this.settings.activeImage;
-          }
-          this.showImage($(this.jQueryMatchedObj[this.activeIndex]));
+          return " class='" + this.settings.classWrapper + "'";
         }
-        this.container.find("a").click(function(e) {
-          var delta;
+      },
+      setInterface: function(linkActive) {
+        var $html, html, self;
 
-          switch (this.className) {
-            case "redde-next":
-            case "redde-prev":
-              self.container.stop(true, true);
-              delta = (this.className === "redde-prev" ? -1 : 1);
-              if (self.jQueryMatchedObj[self.activeIndex + delta] !== undefined) {
-                self.activeIndex = self.activeIndex + delta;
-                self.showImage($(self.jQueryMatchedObj[self.activeIndex]));
-              }
-              break;
-            case "redde-close":
-              self.removeReddeBox();
-              break;
+        this._setActiveIndex(linkActive);
+        html = "<div id=\"redde-overlay\"></div>\n<div id=\"redde-box\"" + (this._cssClassWrapper()) + ">\n  <div id=\"redde-container\">\n    <div id=\"wrap-redde-container\"></div>\n    <i class=\"redde-prev\"></i>\n    <i class=\"redde-close\"></i>\n    <i class=\"redde-next\"></i> \n    <div class=\"redde-desc\"></div>\n  </div>\n</div>";
+        $html = $(html).appendTo('body');
+        this.container = $html.find("#redde-container").on('click', function(e) {
+          return e.stopPropagation();
+        });
+        $html.filter('#redde-overlay').fadeTo(400, this.settings.overlayOpacity);
+        self = this;
+        $html.filter('#redde-box').fadeTo(400, 1.0, function() {
+          $(this).click(self.remove);
+        });
+        this.showImage();
+        this.container.find("i").click(function(e) {
+          if ($(this).hasClass('redde-next')) {
+            self.container.stop(true, true);
+            ++self.activeIndex;
+            self.showImage();
+          } else if ($(this).hasClass('redde-prev')) {
+            self.container.stop(true, true);
+            --self.activeIndex;
+            self.showImage();
+          } else if ($(this).hasClass('redde-close')) {
+            self.remove();
           }
-          e.preventDefault();
+          e.stopPropagation();
         });
       }
     };

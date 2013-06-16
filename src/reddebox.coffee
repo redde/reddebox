@@ -1,80 +1,81 @@
 (($) ->
-  $.fn.reddebox = ->
-    settings = $.extend
-      overlayOpacity: 0.5
-      classWrapper: ""
-      fWidth: 640,
-      fHeight: 480,
-      useThisLink: true
-      imageArray: []
-      activeImage: 0
-    , settings
-    
+  $.fn.reddebox = (opts)->  
     elems = @
 
-    @off('click.reddebox').on('click.reddebox', (e)->
-      new $.reddebox @, elems, settings
+    @off('click.reddebox').on 'click.reddebox', (e)->
+      new $.reddebox @, elems, opts
       e.preventDefault()
       return
-    )
 
-  $.reddebox = (el, elems, settings) ->
-    arr = $.map settings.activeImage, (n)->
-      $('<a />').attr('href', n)[0]
+  $.reddebox = (el, elems, opts) ->
+    settings =
+      overlayOpacity: 0.5
+      classWrapper: ""
+      useThisLink: true
+      imageArray: []
+      activeIndex: 0
 
-    if settings.useThisLink
-      @jQueryMatchedObj = $.merge $.merge([], elems), arr
-    else
-      @jQueryMatchedObj = arr
+    $.extend(settings, opts)
+    imageArray = $.map settings.imageArray, (n)->
+      $('<a />').attr('href', n).get(0)
 
-    @activeIndex = $.map( elems, (n, i) ->
-      if n == el 
-        i
-    )[0] || 0
+    @jQueryMatchedObj = $.merge( $.merge([], elems) , imageArray)
 
+    unless settings.useThisLink
+      @jQueryMatchedObj = $.grep @jQueryMatchedObj, (n)->
+        el != n
+
+    @maxLength = @jQueryMatchedObj.length
     @settings = settings
     @setInterface el
     return @
 
   $.reddebox:: =
-    removeReddeBox: ->
+
+    _setActiveIndex: (el)->
+      if $.isFunction(@settings.activeIndex)
+        @activeIndex = @settings.activeIndex.call()
+      else
+        @activeIndex = $.map( @jQueryMatchedObj, (n, i) ->
+          if n == el 
+            i
+        )[0] || 0
+
+    remove: ->
       $('#redde-overlay, #redde-box').remove()
       return
 
-    setActiveIndex: (linkActiveHref) ->
-      i = @jQueryMatchedObj.length
+    vis: (el)-> el.css 'visibility', 'visible'
 
-      while i--
-        if @jQueryMatchedObj[i].href is linkActiveHref
-          @activeIndex = i
-          break
-      return
+    hid: (el)-> el.css 'visibility', 'hidden'
 
-    updateNavi: (linkActive) ->
-      maxLength = @jQueryMatchedObj.length
-      @setActiveIndex linkActive.attr 'href'
-      @container.find('a.redde-next, a.redde-prev').css 'visibility', 'visible'
+    updateNavi: ->
+      @vis @container.find('i.redde-next, i.redde-prev')
       if @activeIndex is 0
-        $('a.redde-prev').css 'visibility', 'hidden'
-      if @activeIndex is maxLength-1
-        $('a.redde-next').css 'visibility', 'hidden'
-      if linkActive.attr 'title'
-        @container.find("div.redde-desc").html(linkActive.attr("title")).css "visibility", "visible"
+        @hid $('i.redde-prev') 
+      if @activeIndex is @maxLength-1
+        @hid $('i.redde-next')
+      @_setTitle()
+
+    _setTitle: ->
+      if title = @jQueryMatchedObj[@activeIndex].title
+        @vis @container.find("div.redde-desc").html(title)
       else
-        @container.find("div.redde-desc").empty().css "visibility", "hidden"
+        @hid @container.find("div.redde-desc").empty()
       return
 
-    showImage: (me)->
+    showImage: ->
       self = @
-      @updateNavi me
-      if /\.(jpg|jpeg|gif|png)$/i.test($(me).attr("href"))
+      @updateNavi()
+      href = $(@jQueryMatchedObj[@activeIndex]).attr("href")
+      if /\.(jpg|jpeg|gif|png)$/i.test(href)
         img = new Image()
         img.onload = ->
           self._printElLoad $(@).fadeTo(0, 0).get(0)
           return
-        img.src = me.attr('href') 
+        img.src = href
       else
-        @_printElLoad "<iframe src='#{me.attr("href")}' frameborder='0' width='#{@settings.fWidth}' height='#{@settings.fHeight}' />"
+        @_printElLoad "<iframe src='#{href}' frameborder='0' />"
       return
 
     _printElLoad: (el) ->
@@ -126,64 +127,58 @@
           return
 
       ).find("img").fadeTo 0, 1.0
+    
+    _cssClassWrapper: -> 
+      unless @settings.classWrapper
+        ""
+      else
+        " class='#{@settings.classWrapper}'"
 
     setInterface: (linkActive) ->
-      cssClassWrapper = (if (@settings.classWrapper) then " class='#{@settings.classWrapper}'" else "")
+      @_setActiveIndex(linkActive)
 
-      cont = """
+      html = """
             <div id="redde-overlay"></div>
-            <div id="redde-box" #{cssClassWrapper}>
+            <div id="redde-box"#{@._cssClassWrapper()}>
               <div id="redde-container">
                 <div id="wrap-redde-container"></div>
-                <a href="#" class="redde-prev"></a>
-                <a href="#" class="redde-close"></a>
-                <a href="#" class="redde-next"></a> 
+                <i class="redde-prev"></i>
+                <i class="redde-close"></i>
+                <i class="redde-next"></i> 
                 <div class="redde-desc"></div>
               </div>
             </div>
             """
-      $('body').append cont
+      $html = $(html).appendTo 'body'
 
-      @container = $("#redde-container")
+      @container = $html.find("#redde-container").on 'click', (e)->
+        e.stopPropagation()
 
-      $('#redde-overlay').fadeTo 400, @settings.overlayOpacity
+      $html.filter('#redde-overlay').fadeTo 400, @settings.overlayOpacity
 
       self = @
 
-      $('#redde-box').fadeTo 400, 1.0, ->
-        $(@).bind 'click', (e) ->
-          if e.target == @
-            self.removeReddeBox()
-          return
+      $html.filter('#redde-box').fadeTo 400, 1.0, ->
+        $(@).click self.remove
         return
 
-      unless @settings.imageArray.length
-        @showImage $(linkActive)
-      else
-        if @settings.activeImage
-          @activeIndex = @settings.activeImage
-        @showImage $(@jQueryMatchedObj[@activeIndex])
+      @showImage()
 
-      @container.find("a").click (e) ->
-        switch @className
-          when "redde-next", "redde-prev"
-            self.container.stop true, true
-            delta = (if @className is "redde-prev" then -1 else 1)
-            if self.jQueryMatchedObj[self.activeIndex + delta] isnt `undefined`
-              self.activeIndex = self.activeIndex + delta
-              self.showImage $(self.jQueryMatchedObj[self.activeIndex])
-          when "redde-close"
-            self.removeReddeBox()
-            break
-        e.preventDefault()
+      @container.find("i").click (e) ->
+        if $(@).hasClass 'redde-next'
+          self.container.stop true, true
+          ++self.activeIndex
+          self.showImage()
+        else if $(@).hasClass 'redde-prev'
+          self.container.stop true, true
+          --self.activeIndex
+          self.showImage()
+        else if $(@).hasClass 'redde-close'
+          self.remove()
+        e.stopPropagation()
         return
 
-      return
-
-
-
-
-      
+      return   
 
   return
 ) jQuery
