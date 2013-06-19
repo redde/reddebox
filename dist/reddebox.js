@@ -1,4 +1,4 @@
-/*! Reddebox - v0.1.0 - 2013-06-17
+/*! Reddebox - v0.1.0 - 2013-06-20
 * http://gitlab.redde.ru/reddebox
 * Copyright (c) 2013 Konstantin Gorozhankin; Licensed MIT */
 (function() {
@@ -19,6 +19,7 @@
         overlayOpacity: 0.5,
         classWrapper: "",
         useThisLink: true,
+        clickSubstrate: false,
         imageArray: [],
         activeIndex: 0
       };
@@ -182,7 +183,9 @@
         $html.filter('#redde-overlay').fadeTo(400, this.settings.overlayOpacity);
         self = this;
         $html.filter('#redde-box').fadeTo(400, 1.0, function() {
-          $(this).click(self.remove);
+          if (self.settings.clickSubstrate) {
+            $(this).click(self.remove);
+          }
         });
         this.showImage();
         this.container.find("i").click(function(e) {

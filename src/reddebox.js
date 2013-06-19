@@ -16,6 +16,7 @@
         overlayOpacity: 0.5,
         classWrapper: "",
         useThisLink: true,
+        clickSubstrate: false,
         imageArray: [],
         activeIndex: 0
       };
@@ -179,7 +180,9 @@
         $html.filter('#redde-overlay').fadeTo(400, this.settings.overlayOpacity);
         self = this;
         $html.filter('#redde-box').fadeTo(400, 1.0, function() {
-          $(this).click(self.remove);
+          if (self.settings.clickSubstrate) {
+            $(this).click(self.remove);
+          }
         });
         this.showImage();
         this.container.find("i").click(function(e) {

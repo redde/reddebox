@@ -12,6 +12,7 @@
       overlayOpacity: 0.5
       classWrapper: ""
       useThisLink: true
+      clickSubstrate: false # close by clicking on the substrate
       imageArray: []
       activeIndex: 0
 
@@ -159,7 +160,7 @@
       self = @
 
       $html.filter('#redde-box').fadeTo 400, 1.0, ->
-        $(@).click self.remove
+        $(@).click(self.remove) if self.settings.clickSubstrate
         return
 
       @showImage()
